@@ -1,0 +1,13 @@
+﻿using EticaretAPI.Application.Repositories;
+using EticaretAPI.Domain.Entities;
+using EticaretAPI.Persistence.Contexts;
+
+namespace EticaretAPI.Persistence.Repositories
+{
+    public class ProductWriteRepository : WriteRepository<Product>, IProductWriteRepository
+    {
+        public ProductWriteRepository(ETicaretAPIDbContext context) : base(context)
+        {
+        }
+    }
+}
