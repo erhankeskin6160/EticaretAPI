@@ -13,14 +13,12 @@ namespace EticaretAPI.Persistence
             services.AddDbContext<ETicaretAPIDbContext>(options =>
                 options.UseNpgsql(Configuration.ConnectionString),ServiceLifetime.Singleton);
 
-            services.AddSingleton<ICustomerReadReposoitory, CustomerReadReposoitory>();
-            services.AddSingleton<ICustomerWriteRepository, CustomerWriteRepository>();
-            services.AddSingleton<IOrderReadReposoitory, OrderReadReposoitory>();
-            services.AddSingleton<IOrderWriteRepository, OrderWriteRepository>();
-            services.AddSingleton<IProductReadRepository, ProductReadReposoitory>();
-            services.AddSingleton<IProductWriteRepository,ProductWriteRepository>();
-
-
+            services.AddScoped<ICustomerReadReposoitory, CustomerReadReposoitory>();
+            services.AddScoped<ICustomerWriteRepository, CustomerWriteRepository>();
+            services.AddScoped<IOrderReadReposoitory, OrderReadReposoitory>();
+            services.AddScoped<IOrderWriteRepository, OrderWriteRepository>();
+            services.AddScoped<IProductReadRepository, ProductReadReposoitory>();
+            services.AddScoped<IProductWriteRepository,ProductWriteRepository>();
         }
     }
 }

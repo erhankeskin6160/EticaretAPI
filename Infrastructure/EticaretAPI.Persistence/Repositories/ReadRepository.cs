@@ -2,91 +2,51 @@
 using EticaretAPI.Domain.Entities.Comman;
 using EticaretAPI.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using System;
-using System.Collections.Generic;
- using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace EticaretAPI.Persistence.Repositories
 {
     public class ReadRepository<T> : IReadRepository<T> where T : BaseEntity
     {
-        private readonly  ETicaretAPIDbContext _context;
+        private readonly ETicaretAPIDbContext _context;
         public ReadRepository(ETicaretAPIDbContext context)
-        {
-                
-        }
-
-        public DbSet<T> Table => _context.Set<T>();
-
-        public IQueryable<T> GetAll(bool tracking = true)
-         => Table;
-
-        public async Task<T> GetByIdAsync(string id)
-       => await Table.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id));
-
-        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> method)
-        => await Table.FirstOrDefaultAsync(method);
-
-        public IQueryable<T> GetWhere(Expression<Func<T, bool>> method)
-        => Table.Where(method);
-    }
-
-    public class WriteRepository<T> : IWriteRepository<T> where T : BaseEntity
-    {
-        readonly ETicaretAPIDbContext _context;
-
-        public WriteRepository(ETicaretAPIDbContext context)
         {
             _context = context;
         }
 
         public DbSet<T> Table => _context.Set<T>();
 
-        public async Task<bool> AddAsync(T model)
+
+        public IQueryable<T> GetAll(bool tracking = true)
         {
-         EntityEntry<T> entityEntry= await Table.AddAsync(model);   
-         return entityEntry.State==EntityState.Added;
+            var query = Table.AsQueryable();
+            query = query.AsNoTracking();
+            return query;
+        }
+        public async Task<T> GetByIdAsync(string id, bool tracking = true) 
+        {
+            var query = Table.AsQueryable();
+            if (!tracking)
+                query = query.AsNoTracking();
+            return await query.FirstOrDefaultAsync(data => data.Id == Guid.Parse(id));
         }
 
-        public async Task<bool> AddRangeAsync(List<T> datas)
+      
+
+        public async Task<T> GetSingleAsync(Expression<Func<T, bool>> method, bool tracking = true)
         {
-             await Table.AddRangeAsync(datas);
-            return true;
+            var query=Table.AsQueryable();
+            if (!tracking)
+                query = query.AsNoTracking();
+            return await query.FirstOrDefaultAsync(method);
         }
-
-        public bool Remove(T model)
+        public IQueryable<T> GetWhere(Expression<Func<T, bool>> method, bool tracking = true)
         {
-           EntityEntry<T> entityEntry= Table.Remove(model);
-            return entityEntry.State==EntityState.Deleted;
+            var query = Table.Where(method);
+            if (!tracking)
+                query = query.AsNoTracking();
+            return query;
         }
-
-        public async Task<bool> RemoveAsync(string id)
-        {
-           T model= await Table.FirstOrDefaultAsync(data=>data.Id==Guid.Parse(id));
-            return Remove(model);
-
-
-        }
-
-        public bool RemoveRange(List<T> datas)
-        {
-            Table.RemoveRange(datas);
-            return true;
-        }
-
-        public async Task<int> SaveAsync()
-         =>await _context.SaveChangesAsync();
-        public bool Update(T model)
-        {
-          EntityEntry entityEntry=  Table.Update(model);
-          return  entityEntry.State==EntityState.Modified;
-        }
-
-        
     }
 }
-       
+
