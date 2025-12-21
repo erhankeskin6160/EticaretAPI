@@ -1,4 +1,4 @@
-﻿ using EticaretAPI.Application.Repositories;
+﻿using EticaretAPI.Application.Repositories;
 using EticaretAPI.Domain.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -11,32 +11,37 @@ namespace EticaretAPI.API.Controllers
     {
         readonly private IProductWriteRepository productWriteRepository;
         readonly private IProductReadRepository productReadRepository;
-        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository)
+        readonly private IOrderWriteRepository orderWriteRepository;
+        readonly private ICustomerWriteRepository customerWriteRepository;
+        public ProductsController(IProductWriteRepository productWriteRepository, IProductReadRepository productReadRepository, IOrderWriteRepository orderWriteRepository)
         {
             this.productWriteRepository = productWriteRepository;
             this.productReadRepository = productReadRepository;
+            this.orderWriteRepository = orderWriteRepository;
         }
         [HttpGet]
         public async Task Get()
         {
-            //await productWriteRepository.AddRangeAsync(new()
-            //{
-            //    new () {Id=Guid.NewGuid(),Name="Product1",Price=100, CreatedDate=DateTime.UtcNow,Stock=10},
-            //    new () {Id=Guid.NewGuid(),Name="Product1",Price=200, CreatedDate=DateTime.UtcNow,Stock=20},
-            //    new () {Id=Guid.NewGuid(),Name="Product1",Price=300, CreatedDate=DateTime.UtcNow,Stock=30},
-            //});
-            //await productWriteRepository.SaveAsync();
-            Product p = await productReadRepository.GetByIdAsync("464dc0e4-195d-420b-8075-cdb2478b02a2",false);
-            p.Name = "Test";
-            await  productWriteRepository.SaveAsync();
-
+            await productWriteRepository.AddAsync(new()
+            {
+                Name = "Product 1",
+                Price = 100,
+                Stock = 10,
+                CreatedDate = DateTime.UtcNow
+            });
+            await productWriteRepository.SaveAsync();
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(string id)
+        public async Task Get(string id)
         {
-           Product product = await  productReadRepository.GetByIdAsync(id);
-            return Ok(product);
+
+            //Product product = await  productReadRepository.GetByIdAsync(id);
+            // return Ok(product);
+            var customerId = Guid.NewGuid();
+            await customerWriteRepository.AddAsync(new() { Id = customerId, Name = "Mesfd" });
+            await orderWriteRepository.AddAsync(new() { Description = "sad", Adress = "dfdsff sadsad",CustomerId= customerId });
+            await orderWriteRepository.SaveAsync();
         }
 
     }
