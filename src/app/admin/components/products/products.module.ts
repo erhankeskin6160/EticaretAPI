@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
   ],
   imports: [
     CommonModule,
-    RouterModule.forChild([{path:"products",component:ProductsComponent}])
+    RouterModule.forChild([{path:"",component:ProductsComponent}])
   ]
 })
 export class ProductsModule { }

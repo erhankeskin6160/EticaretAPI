@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
   ],
   imports: [
     CommonModule,
-    RouterModule.forChild([{path:"order",component:OrderComponent}])
+    RouterModule.forChild([{path:"",component:OrderComponent}])
 
   ]
 })
